@@ -1,0 +1,3 @@
+CREATE DATABASE library;
+CREATE USER library_user WITH ENCRYPTED PASSWORD 'password';
+GRANT ALL PRIVILEGES ON DATABASE library TO library_user;
