@@ -3,7 +3,7 @@ package com.example.Library;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -77,4 +77,44 @@ public class Controller {
 
 
   }
+
+  @GetMapping("/return")
+  public void returnBook(@RequestParam int bookId) throws Exception {
+    TableBook tableBook = bookRepository.getById(bookId);
+    if (tableBook.getTableUser() != null) {
+      tableBook.setTableUser(null);
+      bookRepository.save(tableBook);
+
+    } else throw new Exception("there is no book in the user");
+
+
+  }
+
+  private Book getBook(TableBook save) {
+    TableBook b = new TableBook();
+    b.setName(save.getName());
+    b.setId(save.getId());
+    b.setAuthor(save.getAuthor());
+
+
+
+    return b;
+  }
+
+  @GetMapping("/getbook")
+  public User getUser(@RequestParam int userId) {
+
+    TableUser tableUser = userRepository.getById(userId);
+    User user = new User();
+    user.setId(tableUser.getId());
+    user.setUsername(tableUser.getUsername());
+
+    List<Book> books = new ArrayList<>();
+    user.setBooks(books);
+    for (TableBook t : tableUser.getTableBooks())
+
+    return book;
+  }
 }
+
+
