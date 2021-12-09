@@ -1,9 +1,13 @@
 package com.example.Library;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,20 +53,28 @@ public class Controller {
   @DeleteMapping("/book")
   public void delBook(@RequestParam int bookId) {
     Optional<TableBook> tb = bookRepository.findById(bookId);
-    if (tb.isPresent()) {
-      bookRepository.delete(tb.get());
-
-    }
+    tb.ifPresent(tableBook -> bookRepository.delete(tableBook));
 
   }
 
   @DeleteMapping("/user")
   public void delUser(@RequestParam int userId) {
     Optional<TableUser> tu = userRepository.findById(userId);
-    if (tu.isPresent()) {
-      userRepository.delete(tu.get());
+    tu.ifPresent(tableUser -> userRepository.delete(tableUser));
 
+  }
+
+  @GetMapping("/take")
+  public void toGetUser(@RequestParam int id, int bookId) throws Exception {
+    TableUser tableUser = userRepository.getById(id);
+    TableBook tableBook = bookRepository.getById(bookId);
+    if (tableBook.getTableUser() != null) {
+      throw new Exception();
     }
+    tableUser.getTableBooks().add(tableBook);
+    tableBook.setTableUser(tableUser);
+    userRepository.save(tableUser);
+
 
   }
 }
