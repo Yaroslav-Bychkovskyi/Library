@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -90,12 +91,15 @@ public class Controller {
 
   }
 
-  private Book getBook(TableBook save) {
+  private Book getBook(TableBook tableBook) {
     Book b = new Book();
-    b.setName(save.getName());
-    b.setId(save.getId());
-    b.setAuthor(save.getAuthor());
-    b.setUserId(save.getTableUser().getId());
+    b.setName(tableBook.getName());
+    b.setId(tableBook.getId());
+    b.setAuthor(tableBook.getAuthor());
+
+    if (tableBook.getTableUser() != null) {
+      b.setUserId(tableBook.getTableUser().getId());
+    }
 
     return b;
   }
@@ -110,11 +114,39 @@ public class Controller {
 
     List<Book> books = new ArrayList<>();
     user.setBooks(books);
-    for (TableBook t : tableUser.getTableBooks()){
+    for (TableBook t : tableUser.getTableBooks()) {
       Book bk = getBook(t);
       books.add(bk);
     }
 
     return user;
+  }
+
+  @GetMapping("/getbook")
+  public List<Book> getBooks() {
+    List<TableBook> tableBook = bookRepository.findAll();
+    List<Book> bookList = new ArrayList<>();
+
+    for (TableBook t : tableBook) {
+      Book b = getBook(t);
+      bookList.add(b);
+    }
+
+    return bookList;
+
+  }
+
+  @PutMapping("/updateuser")
+  public User updateUser(@RequestParam int userId, String userName) {
+    TableUser tableUser = userRepository.getById(userId);
+
+    tableUser.setUsername(userName);
+    TableUser saveUser = userRepository.save(tableUser);
+    User user = new User();
+    user.setId(saveUser.getId());
+    user.setUsername(saveUser.getUsername());
+
+    return user;
+
   }
 }
