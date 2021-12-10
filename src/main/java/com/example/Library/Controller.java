@@ -91,17 +91,16 @@ public class Controller {
   }
 
   private Book getBook(TableBook save) {
-    TableBook b = new TableBook();
+    Book b = new Book();
     b.setName(save.getName());
     b.setId(save.getId());
     b.setAuthor(save.getAuthor());
-
-
+    b.setUserId(save.getTableUser().getId());
 
     return b;
   }
 
-  @GetMapping("/getbook")
+  @GetMapping("/getuser")
   public User getUser(@RequestParam int userId) {
 
     TableUser tableUser = userRepository.getById(userId);
@@ -111,10 +110,11 @@ public class Controller {
 
     List<Book> books = new ArrayList<>();
     user.setBooks(books);
-    for (TableBook t : tableUser.getTableBooks())
+    for (TableBook t : tableUser.getTableBooks()){
+      Book bk = getBook(t);
+      books.add(bk);
+    }
 
-    return book;
+    return user;
   }
 }
-
-
